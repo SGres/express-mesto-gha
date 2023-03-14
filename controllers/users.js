@@ -14,7 +14,10 @@ module.exports.getUserById = (req, res) => {
     })
     .catch((err) => {
       if (err.kind === 'ObjectId') {
-        return res.status(404).send({ message: 'Пользователь не найден' });
+        return res.status(400).send({ message: 'Передан некорректный id пользователя ' });
+      }
+      if (err.statusCode === 404) {
+        return res.status(404).send({ message: 'Передан несуществующий id пользователя. ' });
       }
       res.status(500).send({ message: 'Ошибка по умолчанию.' });
     });
