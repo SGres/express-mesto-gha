@@ -1,5 +1,5 @@
+/* eslint-disable consistent-return */
 const Card = require('../models/card');
-// NotFound
 
 module.exports.getCards = (req, res) => {
   Card.find({})
@@ -46,7 +46,7 @@ module.exports.likeCard = (req, res) => {
           .send({ message: 'Переданы некорректные данные для постановки лайка. ' });
       }
       if (err.statusCode === 404) {
-        return res.status(404).send({ message: 'Передан несуществующий _id карточки. '});
+        return res.status(404).send({ message: 'Передан несуществующий _id карточки. ' });
       }
       return res.status(500).send({ message: 'Ошибка по-умолчанию. ' });
     });
@@ -66,7 +66,7 @@ module.exports.dislikeCard = (req, res) => {
           .send({ message: 'Переданы некорректные данные для постановки лайка. ' });
       }
       if (err.statusCode === 404) {
-        return res.status(404).send({ message: 'Передан несуществующий _id карточки. '});
+        return res.status(404).send({ message: 'Передан несуществующий _id карточки. ' });
       }
       return res.status(500).send({ message: 'Ошибка по-умолчанию. ' });
     });
