@@ -11,7 +11,7 @@ module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: ' Получение пользователя с несуществующим в БД id' });
+        return res.status(404).send({ message: ' Передан несуществующий id пользователя' });
       }
       res.status(200).send(user);
     })
