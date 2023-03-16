@@ -10,15 +10,18 @@ module.exports.getUsers = (req, res) => {
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => {
+      if (!user) {
+        return res.status(404).send({ message: ' Получение пользователя с несуществующим в БД id' });
+      }
       res.status(200).send(user);
     })
     .catch((err) => {
       if (err.kind === 'ObjectId') {
         return res.status(400).send({ message: 'Передан некорректный id пользователя ' });
       }
-      if (err.statusCode === 404) {
-        return res.status(404).send({ message: 'Передан несуществующий id пользователя. ' });
-      }
+      // if (err.statusCode === 404) {
+      //   return res.status(404).send({ message: 'Передан несуществующий id пользователя. ' });
+      // }
       res.status(500).send({ message: 'Ошибка по умолчанию.' });
     });
 };
