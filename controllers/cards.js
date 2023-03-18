@@ -76,7 +76,7 @@ module.exports.dislikeCard = (req, res) => {
       if (err.name === 'CastError') {
         return res
           .status(BadRequest)
-          .send({ message: 'Переданы некорректный id карточки. ' });
+          .send({ message: 'Передан некорректный id карточки. ' });
       }
       return res.status(ServerError).send({ message: 'Ошибка по-умолчанию. ' });
     });
