@@ -1,4 +1,3 @@
-/* eslint-disable consistent-return */
 const User = require('../models/user');
 const { NotFound, ServerError, BadRequest } = require('../codeerror');
 
@@ -15,12 +14,14 @@ module.exports.getUserById = (req, res) => {
         return res.status(NotFound).send({ message: ' Передан несуществующий id пользователя' });
       }
       res.status(200).send(user);
+      return false;
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         return res.status(BadRequest).send({ message: 'Передан некорректный id пользователя ' });
       }
       res.status(ServerError).send({ message: 'Ошибка по умолчанию.' });
+      return false;
     });
 };
 
@@ -33,6 +34,7 @@ module.exports.createUser = (req, res) => {
         return res.status(BadRequest).send({ message: 'Переданы некорректные данные при создании пользователя.' });
       }
       res.status(ServerError).send({ message: 'Ошибка по умолчанию.' });
+      return false;
     });
 };
 
@@ -45,17 +47,19 @@ module.exports.updateUser = (req, res) => {
         return res.status(BadRequest).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
       }
       res.status(ServerError).send({ message: 'Ошибка по умолчанию.' });
+      return false;
     });
 };
 
 module.exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
-  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true })
+  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(BadRequest).send({ message: 'Переданы некорректные данные при обновлении аватара.' });
       }
       res.status(ServerError).send({ message: 'Ошибка по умолчанию.' });
+      return false;
     });
 };

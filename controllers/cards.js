@@ -1,9 +1,9 @@
-/* eslint-disable consistent-return */
 const Card = require('../models/card');
 const { NotFound, ServerError, BadRequest } = require('../codeerror');
 
 module.exports.getCards = (req, res) => {
   Card.find({})
+    .populate('owner')
     .then((cards) => res.status(200).send({ data: cards }))
     .catch(() => res.status(ServerError).send({ message: 'Ошибка по умолчанию. ' }));
 };
@@ -11,6 +11,7 @@ module.exports.getCards = (req, res) => {
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
+    .populate('owner')
     .then((card) => res.status(201).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -29,12 +30,14 @@ module.exports.deleteCard = (req, res) => {
         return res.status(NotFound).send({ message: ' Передан несуществующий id карточки' });
       }
       res.status(200).send({ message: 'Карточка удалена' });
+      return false;
     })
     .catch((err) => {
-      if (err.kind === 'ObjectId') {
+      if (err.name === 'ObjectId') {
         return res.status(BadRequest).send({ message: 'Передан некорректный id карточки. ' });
       }
       res.status(ServerError).send({ message: 'Ошибка по умолчанию.' });
+      return false;
     });
 };
 
@@ -44,11 +47,13 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
+    .populate('owner')
     .then((card) => {
       if (!card) {
         return res.status(NotFound).send({ message: ' Передан несуществующий id карточки' });
       }
       res.status(200).send({ data: card });
+      return false;
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -66,11 +71,13 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
+    .populate('owner')
     .then((card) => {
       if (!card) {
         return res.status(NotFound).send({ message: ' Передан несуществующий id карточки' });
       }
       res.status(200).send({ data: card });
+      return false;
     })
     .catch((err) => {
       if (err.name === 'CastError') {
