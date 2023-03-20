@@ -10,8 +10,9 @@ module.exports.getCards = (req, res) => {
 
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
+
   Card.create({ name, link, owner: req.user._id })
-    .populate('owner')
+    .then((card) => card.populate('owner'))
     .then((card) => res.status(201).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -71,7 +72,6 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .populate('owner')
     .then((card) => {
       if (!card) {
         return res.status(NotFound).send({ message: ' Передан несуществующий id карточки' });
