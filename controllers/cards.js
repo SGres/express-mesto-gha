@@ -34,7 +34,7 @@ module.exports.deleteCard = (req, res) => {
       return false;
     })
     .catch((err) => {
-      if (err.name === 'ObjectId') {
+      if (err.name === 'CastError') {
         return res.status(BadRequest).send({ message: 'Передан некорректный id карточки. ' });
       }
       res.status(ServerError).send({ message: 'Ошибка по умолчанию.' });
